@@ -5,25 +5,34 @@
 class ReservationSystem {
 
 private:
-    int room_count;
-    int* room_capacities;
-    ReservationRequest**** room_schedule;
+    int room_count;                         // Número de salas
+    int* room_capacities;                   // Capacidade de cada sala
+    ReservationRequest**** room_schedule;   // Grade de reservas [sala][dia][hora]
     
-    // Estruturas internas escolhidas pelos alunos
-    // para armazenar e gerenciar as reservas, os horários, ...
-
 public:
 
     ReservationSystem(int room_count, int* room_capacities);
     ~ReservationSystem();
 
+    /**
+     * @brief Tenta reservar uma sala para a requisição dada.
+     * 
+     * @param request Requisição com dia, horários, nome da disciplina e número de alunos.
+     * @return true se a reserva foi realizada, false caso contrário.
+     */
     bool reserve(ReservationRequest request);
+    /**
+     * @brief Tenta cancelar a reserva de uma disciplina.
+     * 
+     * @param course_name Nome da disciplina a ser cancelada.
+     * @return true se o cancelamento foi realizado, false caso contrário.
+     */
     bool cancel(std::string course_name);
 
+    /**
+     * @brief Exibe a grade atual de reservas organizadas por sala.
+     */
     void printSchedule();
-
-    // Outros métodos utilitários necessários
-    // para auxiliar nas funções requisitadas
 };
 
 #endif
