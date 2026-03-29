@@ -7,7 +7,8 @@ class ReservationSystem {
 private:
     int room_count;
     int* room_capacities;
-
+    ReservationRequest**** room_schedule;
+    
     // Estruturas internas escolhidas pelos alunos
     // para armazenar e gerenciar as reservas, os horários, ...
 
