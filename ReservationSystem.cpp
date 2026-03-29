@@ -1,5 +1,7 @@
 #include "ReservationSystem.hpp"
 
+const std::string week[] = {"segunda", "terça", "quarta", "quinta", "sexta"};
+
 ReservationSystem::ReservationSystem(int room_count, int* room_capacities) {
     this->room_count = room_count;
     this->room_capacities = room_capacities;
@@ -16,14 +18,20 @@ ReservationSystem::~ReservationSystem() {
     for (int room = 0; room < room_count; room++) {
         for (int day = 0; day < 5; day++) {
             for (int hour = 0; hour < 14; hour++) {
-                delete[] room_schedule[room][day][hour];
+                ReservationRequest* req = room_schedule[room][day][hour];
+                if (req != nullptr) {
+                    int interval = req->getEndHour() - req->getStartHour();
+                    delete req;
+                    for (int reserved_hour = 0; reserved_hour < interval; reserved_hour++) {
+                        room_schedule[room][day][hour + reserved_hour] = nullptr;
+                    }
+                }
             }
             delete[] room_schedule[room][day];
         }
         delete[] room_schedule[room];
     }
-    delete[] room_schedule;
-
+    delete[] room_schedule;   
 }
 
 bool ReservationSystem::reserve(ReservationRequest request) {
@@ -34,7 +42,6 @@ bool ReservationSystem::reserve(ReservationRequest request) {
     int day_index = -1;
     bool result = false;
     std::string week_day = request.getWeekday();
-    std::string week[] = {"segunda", "terça", "quarta", "quinta", "sexta"};
     ReservationRequest* req = new ReservationRequest(request);
 
     for (int day = 0; day < 5; day++) {
@@ -76,8 +83,11 @@ bool ReservationSystem::cancel(std::string course_name) {
                 ReservationRequest* req = room_schedule[room][day][hour];
 
                 if (req != nullptr && req->getCourseName() == course_name) {
+                    int interval = req->getEndHour() - req->getStartHour();
                     delete req;
-                    req = nullptr;
+                    for (int reserved_hour = 0; reserved_hour < interval; reserved_hour++) {
+                        room_schedule[room][day][hour + reserved_hour] = nullptr;
+                    }
 
                     result = true;
                 }
